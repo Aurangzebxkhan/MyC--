@@ -177,14 +177,176 @@ int main() {
 
 
 // Cosmetics Shop
-void cosmeticsShop() {
-    vector<Item> cosmetics = {{"Lipstick", 500, 10}, {"Foundation", 1000, 15}, {"Perfume", 1500, 20}};
-    cout << "\nWelcome to the Cosmetics Shop\n";
-    cout << "Items Available:\n";
-    for (const auto& item : cosmetics) {
-        cout << item.name << " - Rs. " << item.price << " (" << item.discount << "% discount)\n";
+// Personal Care Products Management
+struct Product {
+    string productName;
+    int price;
+    int quantity;
+
+    Product(string name, int p, int q) : productName(name), price(p), quantity(q) {}
+};
+
+// Function to display the main menu
+void displayMainMenu() {
+    cout << "\n********** PERSONAL CARE MENU **********\n";
+    cout << "1. Skin Care\n";
+    cout << "2. Hair Care\n";
+    cout << "3. Bath & Body\n";
+    cout << "4. Fragrances\n";
+    cout << "5. View and Adjust Cart\n";
+    cout << "6. Finalize Purchase\n";
+    cout << "***************************************\n";
+}
+
+// Function to add products to the cart
+void addProductToCart(vector<Product>& cart, const string& category, const vector<pair<string, int>>& products) {
+    int productChoice, quantity;
+    cout << "\nYou selected " << category << ".\n";
+    for (size_t i = 0; i < products.size(); i++) {
+        cout << i + 1 << ". " << products[i].first << " - Rs. " << products[i].second << endl;
+    }
+    cout << "Enter the number of the product you want to add to the cart: ";
+    cin >> productChoice;
+    if (productChoice < 1 || productChoice > products.size()) {
+        cout << "Invalid choice. Please try again.\n";
+        return;
+    }
+    cout << "Enter the quantity: ";
+    cin >> quantity;
+    cart.push_back(Product(products[productChoice - 1].first, products[productChoice - 1].second, quantity));
+    cout << "Added " << quantity << " x " << products[productChoice - 1].first << " to your cart.\n"; 
+}
+
+// Function to display skin care products
+void displaySkinCareMenu(vector<Product>& cart) {
+    vector<pair<string, int>> skinCare = {
+        {"Moisturizer", 500},
+        {"Sunscreen", 700},
+        {"Face Wash", 300},
+        {"Serum", 1200}
+    };
+    addProductToCart(cart, "Skin Care", skinCare);
+}
+
+// Function to display hair care products
+void displayHairCareMenu(vector<Product>& cart) {
+    vector<pair<string, int>> hairCare = {
+        {"Shampoo", 400},
+        {"Conditioner", 350},
+        {"Hair Oil", 250},
+        {"Hair Mask", 800}
+    };
+    addProductToCart(cart, "Hair Care", hairCare);
+}
+
+// Function to display bath & body products
+void displayBathBodyMenu(vector<Product>& cart) {
+    vector<pair<string, int>> bathBody = {
+        {"Body Wash", 450},
+        {"Scrub", 550},
+        {"Lotion", 600},
+        {"Soap", 200}
+    };
+    addProductToCart(cart, "Bath & Body", bathBody);
+}
+
+// Function to display fragrances
+void displayFragrancesMenu(vector<Product>& cart) {
+    vector<pair<string, int>> fragrances = {
+        {"Perfume", 1500},
+        {"Body Mist", 800},
+        {"Roll-On", 300},
+        {"Room Spray", 700}
+    };
+    addProductToCart(cart, "Fragrances", fragrances);
+}
+
+// Function to view and adjust cart
+void viewAndAdjustCart(vector<Product>& cart) {
+    if (cart.empty()) {
+        cout << "Your cart is empty.\n";
+        return;
+    }
+
+    cout << "Your current cart:\n";
+    int total = 0;
+    for (size_t i = 0; i < cart.size(); i++) {
+        cout << i + 1 << ". " << cart[i].productName << " - Rs. " << cart[i].price << " x " << cart[i].quantity << endl;
+        total += cart[i].price * cart[i].quantity;
+    }
+
+    cout << "\nTotal: Rs. " << total << endl;
+    char action;
+    cout << "\nWould you like to (R)emove an item, (A)dd a new item, or (C)ontinue to finalize the purchase? ";
+    cin >> action;
+    if (action == 'R' || action == 'r') {
+        int itemIndex;
+        cout << "Enter the number of the item you want to remove (1-" << cart.size() << "): ";
+        cin >> itemIndex;
+        if (itemIndex >= 1 && itemIndex <= cart.size()) {
+            cart.erase(cart.begin() + itemIndex - 1);
+            cout << "Item removed from the cart.\n";
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
     }
 }
+
+// Function to handle shopping
+void handleShopping() {
+    vector<Product> cart;
+    int choice;
+    do {
+        displayMainMenu();
+        cout << "Enter the number of the category you want (1-6): ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: displaySkinCareMenu(cart); break;
+            case 2: displayHairCareMenu(cart); break;
+            case 3: displayBathBodyMenu(cart); break;
+            case 4: displayFragrancesMenu(cart); break;
+            case 5: viewAndAdjustCart(cart); break;
+            case 6:
+                if (cart.empty()) {
+                    cout << "Your cart is empty. Please add products to your cart.\n";
+                } else {
+                    cout << "Finalizing your purchase...\n";
+                    int total = 0;
+                    cout << "Your final cart:\n";
+                    for (const auto& item : cart) {
+                        cout << "- " << item.productName << " - Rs. " << item.price << " x " << item.quantity << " = Rs. " << item.price * item.quantity << endl;
+                        total += item.price * item.quantity;
+                    }
+                    cout << "\nTotal Bill: Rs. " << total << endl;
+                    cout << "Thank you for shopping with us!\n";
+                }
+                break;
+            default: cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 6);
+}
+
+void personalCareMenu() {
+    vector<Product> cart;
+    int choice;
+    do {
+        cout << "\nWelcome to the Personal Care Store\n";
+        cout << "1. Start Shopping\n";
+        cout << "2. View Main Menu\n";
+        cout << "3. Exit Store\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: handleShopping(); break;
+            case 2: displayMainMenu(); break;
+            case 3: cout << "Thank you for visiting our store.\n"; break;
+            default: cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 3);
+}
+
 // Clothing Shop
 // Structure for clothing items
 struct ClothingItem {
@@ -271,34 +433,32 @@ void displayKidsCollection(vector<ClothingItem>& order)
 // Function to view and finalize the order
 void viewAndFinalizeOrder(vector<ClothingItem>& order) {
     if (order.empty()) {
-        cout << "Your cart is empty. .\n";
+        cout << "Your cart is empty.\n";
         return;
     }
 
-    cout << "\nYour current order:\n";
+    cout << "Your cart:\n";
     int total = 0;
-    for (size_t i = 0; i < order.size(); i++) {
+    for (int i = 0; i < order.size(); i++) {
         cout << i + 1 << ". " << order[i].itemName << " - Rs. " << order[i].price << " x " << order[i].quantity << endl;
         total += order[i].price * order[i].quantity;
     }
 
     cout << "\nTotal: Rs. " << total << endl;
-    char finalize;
-    cout << "Would you like to finalize your order? (Y/N): ";
-    cin >> finalize;
-    if (finalize == 'Y' || finalize == 'y') {
+    char action;
+    cout << "\nWould you like to (R)emove an item, (A)dd a new item or (C)ontinue to checkout? ";
+    cin >> action;
+    if (action == 'R' || action == 'r') {
         int itemIndex;
-        cout << " Enter the number of item you want to remove (1-" << order.size() << "): ";
-        if( itemIndex>=1&& itemIndex<=order.size())
-        {
-            order.erase(order.begin()+itemIndex-1);
-            cout<<"Item removed from the order.\n";
+        cout << "Enter the number of the item you want to remove (1-" << order.size() << "): ";
+        cin >> itemIndex;
+        if (itemIndex >= 1 && itemIndex <= order.size()) {
+            order.erase(order.begin() + itemIndex - 1);
+            cout << "Item removed from the cart.\n";
+        } else {
+            cout << "Invalid choice. Please try again.\n";
         }
-        else
-        {
-            cout<<"Invalid choice. Please try again.\n";
-        }
-    }    
+    }
 }
 
 // Function to handle clothing shop
@@ -567,6 +727,11 @@ void thirdFloor() {
         case 2: cout << "Returning to Main Menu...\n"; break;
         default: cout << "Invalid choice. Try again.\n"; return;
     }
+}
+
+// Function to handle cosmetics shop
+void cosmeticsShop() {
+    personalCareMenu();
 }
 
 // First Floor Menu
