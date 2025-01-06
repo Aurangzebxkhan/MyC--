@@ -1,7 +1,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <ctime>
 using namespace std;
+
+// Forward declarations
+void firstFloor();
+void secondFloor();
+void thirdFloor();
 
 // Base structure for items
 struct Item {
@@ -10,22 +16,165 @@ struct Item {
     float discount;
 };
 
-// Parking Charges
-void parkingMenu() {
-    cout << "\nWelcome to the Parking Area\n";
-    cout << "Parking Charges:\n";
-    cout << "1. Car: Rs. 100/hour\n";
-    cout << "2. Motorcycle: Rs. 50/hour\n";
+// Structure to represent a parked vehicle
+struct Vehicle {
+    string plateNumber;
+    string type; // Car, Motorcycle, or Truck
+    int parkingSlot;
+    time_t entryTime; // Entry time for calculating charges
+};
 
-    int vehicleType, hours;
-    cout << "Enter vehicle type (1 for Car, 2 for Motorcycle): ";
-    cin >> vehicleType;
-    cout << "Enter hours parked: ";
-    cin >> hours;
+// Function to calculate parking charges based on time duration
+int calculateCharges(time_t entryTime) {
+    time_t currentTime = time(nullptr); // Current time
+    double duration = difftime(currentTime, entryTime) / 60.0; // Duration in minutes
 
-    int rate = (vehicleType == 1) ? 100 : 50;
-    cout << "Total Parking Fee: Rs. " << (rate * hours) << endl;
+    if (duration <= 10) {
+        return 0;
+    } else if (duration <= 20) {
+        return 50;
+    } else if (duration <= 30) {
+        return 80;
+    } else if (duration <= 40) {
+        return 120;
+    } else if (duration <= 60) {
+        return 150;
+    } else if (duration <= 120) {
+        return 300;
+    } else {
+        return 1500; // Charges for a whole day or more
+    }
 }
+
+// Function to display the parking lot status
+void displayParkingLot(const vector<Vehicle>& parkingLot, int totalSlots) {
+    cout << "\n********** Parking Lot Status **********\n";
+    for (int i = 1; i <= totalSlots; i++) {
+        bool slotOccupied = false;
+        for (const auto& vehicle : parkingLot) {
+            if (vehicle.parkingSlot == i) {
+                cout << "Slot " << i << ": " << vehicle.type << " (Plate: " << vehicle.plateNumber << ")\n";
+                slotOccupied = true;
+                break;
+            }
+        }
+        if (!slotOccupied) {
+            cout << "Slot " << i << ": Empty\n";
+        }
+    }
+    cout << "****************************************\n";
+}
+
+// Function to park a vehicle
+void parkVehicle(vector<Vehicle>& parkingLot, int totalSlots) {
+    if (parkingLot.size() >= totalSlots) {
+        cout << "Parking lot is full. No available slots.\n";
+        return;
+    }
+
+    string plateNumber, type;
+    cout << "Enter vehicle plate number: ";
+    cin >> plateNumber;
+    cout << "Enter vehicle type (Car/Motorcycle/Truck): ";
+    cin >> type;
+
+    int slotNumber = -1;
+    for (int i = 1; i <= totalSlots; i++) {
+        bool slotOccupied = false;
+        for (const auto& vehicle : parkingLot) {
+            if (vehicle.parkingSlot == i) {
+                slotOccupied = true;
+                break;
+            }
+        }
+        if (!slotOccupied) {
+            slotNumber = i;
+            break;
+        }
+    }
+
+    if (slotNumber != -1) {
+        parkingLot.push_back({plateNumber, type, slotNumber, time(nullptr)});
+        cout << "Vehicle parked successfully in slot " << slotNumber << ".\n";
+    } else {
+        cout << "No available slots found. Parking failed.\n";
+    }
+}
+
+// Function to remove a vehicle from the parking lot
+void removeVehicle(vector<Vehicle>& parkingLot) {
+    if (parkingLot.empty()) {
+        cout << "Parking lot is empty. No vehicles to remove.\n";
+        return;
+    }
+
+    string plateNumber;
+    cout << "Enter the plate number of the vehicle to remove: ";
+    cin >> plateNumber;
+
+    auto it = parkingLot.begin();
+    while (it != parkingLot.end()) {
+        if (it->plateNumber == plateNumber) {
+            int charges = calculateCharges(it->entryTime);
+            cout << "Vehicle with plate " << plateNumber << " removed from slot " << it->parkingSlot << ".\n";
+            cout << "Parking charges: Rs. " << charges << ".\n";
+            parkingLot.erase(it);
+            return;
+        }
+        ++it;
+    }
+
+    cout << "Vehicle with plate " << plateNumber << " not found in the parking lot.\n";
+}
+
+int main() {
+    vector<Vehicle> parkingLot;
+    const int totalSlots = 10; // Total parking slots available
+    int choice;
+
+    do {
+        cout << "\n*********Welcome to the Shopping Mall*********\n";
+        cout << "1. Ground Floor (Parking)\n";
+        cout << "2. First Floor (Shops)\n";
+        cout << "3. Second Floor (Bookstore)\n";
+        cout << "4. Third Floor (Restaurant)\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: 
+                int parkingChoice;
+                do {
+                    cout << "\n********** Parking Management System **********\n";
+                    cout << "1. Park a Vehicle\n";
+                    cout << "2. Remove a Vehicle\n";
+                    cout << "3. View Parking Lot Status\n";
+                    cout << "4. Exit\n";
+                    cout << "**********************************************\n";
+                    cout << "Enter your choice: ";
+                    cin >> parkingChoice;
+
+                    switch (parkingChoice) {
+                        case 1: parkVehicle(parkingLot, totalSlots); break;
+                        case 2: removeVehicle(parkingLot); break;
+                        case 3: displayParkingLot(parkingLot, totalSlots); break;
+                        case 4: cout << "Exiting the system. Thank you!\n"; break;
+                        default: cout << "Invalid choice. Please try again.\n";
+                    }
+                } while (parkingChoice != 4);
+                break;
+            case 2: firstFloor(); break;
+            case 3: secondFloor(); break;
+            case 4: thirdFloor(); break;
+            case 5: cout << "Thank you for visiting!\n"; break;
+            default: cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
 
 // Cosmetics Shop
 void cosmeticsShop() {
@@ -122,7 +271,7 @@ void displayKidsCollection(vector<ClothingItem>& order)
 // Function to view and finalize the order
 void viewAndFinalizeOrder(vector<ClothingItem>& order) {
     if (order.empty()) {
-        cout << "Your cart is empty. Please add items to your cart first.\n";
+        cout << "Your cart is empty. .\n";
         return;
     }
 
@@ -138,12 +287,18 @@ void viewAndFinalizeOrder(vector<ClothingItem>& order) {
     cout << "Would you like to finalize your order? (Y/N): ";
     cin >> finalize;
     if (finalize == 'Y' || finalize == 'y') {
-        cout << "Thank you for shopping with us! Your order has been placed successfully.\n";
-        order.clear(); 
-        // Clear the order after finalizing
-    } else {
-        cout << "You can continue shopping.\n";
-    }
+        int itemIndex;
+        cout << " Enter the number of item you want to remove (1-" << order.size() << "): ";
+        if( itemIndex>=1&& itemIndex<=order.size())
+        {
+            order.erase(order.begin()+itemIndex-1);
+            cout<<"Item removed from the order.\n";
+        }
+        else
+        {
+            cout<<"Invalid choice. Please try again.\n";
+        }
+    }    
 }
 
 // Function to handle clothing shop
@@ -440,31 +595,4 @@ void firstFloor() {
 void secondFloor() {
     cout << "\nWelcome to the Second Floor\n";
     bookstore();
-}
-
-// Main Program
-int main() {
-    int choice;
-
-    do {
-        cout << "\nWelcome to the Shopping Mall\n";
-        cout << "1. Ground Floor (Parking)\n";
-        cout << "2. First Floor (Shops)\n";
-        cout << "3. Second Floor (Bookstore)\n";
-        cout << "4. Third Floor (Restaurant)\n";
-        cout << "5. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
-
-        switch (choice) {
-            case 1: parkingMenu(); break;
-            case 2: firstFloor(); break;
-            case 3: secondFloor(); break;
-            case 4: thirdFloor(); break;
-            case 5: cout << "Thank you for visiting!\n"; break;
-            default: cout << "Invalid choice. Try again.\n";
-        }
-    } while (choice != 5);
-
-    return 0;
 }
