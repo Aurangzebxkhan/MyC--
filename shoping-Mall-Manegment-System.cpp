@@ -4,6 +4,7 @@
 #include <ctime>
 using namespace std;
 
+
 // Forward declarations
 void firstFloor();
 void secondFloor();
