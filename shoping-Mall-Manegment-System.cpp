@@ -15,7 +15,7 @@ struct Item {
     float price;
     float discount;
 };
-
+// parking Program 
 // Structure to represent a parked vehicle
 struct Vehicle {
     string plateNumber;
@@ -187,7 +187,7 @@ struct Product {
 };
 
 // Function to display the main menu
-void displayMainMenu() {
+void displayMainMenuu() {
     cout << "\n********** PERSONAL CARE MENU **********\n";
     cout << "1. Skin Care\n";
     cout << "2. Hair Care\n";
@@ -297,7 +297,7 @@ void handleShopping() {
     vector<Product> cart;
     int choice;
     do {
-        displayMainMenu();
+        displayMainMenuu();
         cout << "Enter the number of the category you want (1-6): ";
         cin >> choice;
 
@@ -340,7 +340,7 @@ void personalCareMenu() {
 
         switch (choice) {
             case 1: handleShopping(); break;
-            case 2: displayMainMenu(); break;
+            case 2: displayMainMenuu(); break;
             case 3: cout << "Thank you for visiting our store.\n"; break;
             default: cout << "Invalid choice. Try again.\n";
         }
@@ -483,24 +483,319 @@ void clothingShop() {
 
 
 // Jewelry Shop
-void jewelryShop() {
-    vector<Item> jewelry = {{"Gold Necklace", 50000, 5}, {"Gold Ring", 20000, 8}, {"Gold Bracelet", 30000, 10}};
-    cout << "\nWelcome to the Jewelry Shop\n";
-    cout << "Items Available:\n";
-    for (const auto& item : jewelry) {
-        cout << item.name << " - Rs. " << item.price << " (" << item.discount << "% discount)\n";
+// Jewelry Shop Interactive Menu
+struct JewelryItem {
+    string category;
+    string name;
+    int price;
+    int discount;
+
+    JewelryItem(string c, string n, int p, int d) : category(c), name(n), price(p), discount(d) {}
+};
+
+void displayJewelryCategories() {
+    cout << "\n********** Jewelry Shop Categories **********\n";
+    cout << "1. Hair Ornaments\n";
+    cout << "2. Arms\n";
+    cout << "3. Hands\n";
+    cout << "4. Body\n";
+    cout << "5. Feet\n";
+    cout << "6. Special Functions\n";
+    cout << "7. Gemstone Jewelry\n";
+    cout << "8. Components\n";
+    cout << "9. Exit Jewelry Shop\n";
+    cout << "*********************************************\n";
+}
+
+void addJewelryItem(vector<JewelryItem>& cart, const string& category, const vector<JewelryItem>& items) {
+    int itemChoice, quantity;
+    cout << "\nCategory: " << category << "\n";
+    for (size_t i = 0; i < items.size(); i++) {
+        cout << i + 1 << ". " << items[i].name << " - Rs. " << items[i].price << " (" << items[i].discount << "% discount)\n";
     }
+    cout << "Enter the number of the item you want to add to the cart: ";
+    cin >> itemChoice;
+
+    if (itemChoice < 1 || itemChoice > items.size()) {
+        cout << "Invalid choice. Please try again.\n";
+        return;
+    }
+
+    cart.push_back(items[itemChoice - 1]);
+    cout << "Added " << items[itemChoice - 1].name << " to your cart.\n";
+}
+
+void viewCart(const vector<JewelryItem>& cart) {
+    if (cart.empty()) {
+        cout << "Your cart is empty.\n";
+        return;
+    }
+
+    int total = 0;
+    cout << "\nYour Cart:\n";
+    for (size_t i = 0; i < cart.size(); i++) {
+        int discountedPrice = cart[i].price * (100 - cart[i].discount) / 100;
+        cout << i + 1 << ". " << cart[i].name << " - Rs. " << discountedPrice << " (Original: Rs. " << cart[i].price << ")\n";
+        total += discountedPrice;
+    }
+    cout << "\nTotal: Rs. " << total << "\n";
+}
+
+void handleJewelryShop() {
+    vector<JewelryItem> cart;
+    int choice;
+
+    vector<JewelryItem> hairOrnaments = {
+        {"Hair Ornaments", "Crowns", 5000, 10},
+        {"Hair Ornaments", "Headband", 1500, 5},
+        {"Hair Ornaments", "Scrunchie", 500, 0},
+        {"Hair Ornaments", "Hairclip", 1000, 5}
+    };
+
+    vector<JewelryItem> arms = {
+        {"Arms", "Armlet (upper arm bracelets)", 3000, 10},
+        {"Arms", "Bangle", 2500, 5},
+        {"Arms", "Bracelet", 2000, 10},
+        {"Arms", "Charm bracelet", 1800, 5},
+        {"Arms", "Italian charm bracelet", 2200, 10},
+        {"Arms", "Friendship bracelet", 1500, 0},
+        {"Arms", "Gospel bracelet", 1700, 5},
+        {"Arms", "Cuff links", 3000, 15}
+    };
+
+    vector<JewelryItem> hands = {
+        {"Hands", "Ring", 5000, 10},
+        {"Hands", "Championship ring", 7000, 15},
+        {"Hands", "Class ring", 4000, 5},
+        {"Hands", "Engagement ring", 20000, 20},
+        {"Hands", "Wedding ring", 25000, 25},
+        {"Hands", "Promise ring", 8000, 10},
+        {"Hands", "Pre-engagement ring", 10000, 15},
+        {"Hands", "Hand Chain Ring-bracelet", 12000, 10}
+    };
+
+    vector<JewelryItem> body = {
+        {"Body", "Belly chain", 7000, 10},
+        {"Body", "Body piercing jewelry", 2000, 5},
+        {"Body", "Brooch", 3500, 10},
+        {"Body", "Earring", 4000, 10},
+        {"Body", "Chatelaine", 6000, 15},
+        {"Body", "Necklace", 8000, 10},
+        {"Body", "Mala set", 10000, 20}
+    };
+
+    vector<JewelryItem> feet = {
+        {"Feet", "Anklet (ankle bracelets)", 3000, 10},
+        {"Feet", "Toe ring", 2000, 5}
+    };
+
+    vector<JewelryItem> specialFunctions = {
+        {"Special Functions", "Amulet", 4000, 10},
+        {"Special Functions", "Medical alert jewelry", 5000, 15},
+        {"Special Functions", "Prayer beads", 3000, 5}
+    };
+
+    vector<JewelryItem> gemstoneJewelry = {
+        {"Gemstone Jewelry", "Gemstone Pendant", 15000, 20}
+    };
+
+    vector<JewelryItem> components = {
+        {"Components", "Locket", 2000, 5},
+        {"Components", "Medallion", 3000, 10},
+        {"Components", "Pendant", 5000, 15}
+    };
+
+    do {
+        displayJewelryCategories();
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: addJewelryItem(cart, "Hair Ornaments", hairOrnaments); break;
+            case 2: addJewelryItem(cart, "Arms", arms); break;
+            case 3: addJewelryItem(cart, "Hands", hands); break;
+            case 4: addJewelryItem(cart, "Body", body); break;
+            case 5: addJewelryItem(cart, "Feet", feet); break;
+            case 6: addJewelryItem(cart, "Special Functions", specialFunctions); break;
+            case 7: addJewelryItem(cart, "Gemstone Jewelry", gemstoneJewelry); break;
+            case 8: addJewelryItem(cart, "Components", components); break;
+            case 9: cout << "Exiting Jewelry Shop...\n"; break;
+            default: cout << "Invalid choice. Try again.\n";
+        }
+
+        if (choice != 9) {
+            char viewCartChoice;
+            cout << "\nWould you like to view your cart? (Y/N): ";
+            cin >> viewCartChoice;
+            if (viewCartChoice == 'Y' || viewCartChoice == 'y') {
+                viewCart(cart);
+            }
+        }
+    } while (choice != 9);
 }
 
 // Bookstore
-void bookstore() {
-    vector<Item> books = {{"C++ Programming", 1000, 10}, {"Python Basics", 1200, 15}, {"Data Science", 1500, 20}};
-    cout << "\nWelcome to the Bookstore\n";
-    cout << "Books Available:\n";
-    for (const auto& book : books) {
-        cout << book.name << " - Rs. " << book.price << " (" << book.discount << "% discount)\n";
+// program for bookstore
+struct Book {
+    string name;
+    int price;
+    int discount;
+
+    Book(string n, int p, int d) : name(n), price(p), discount(d) {}
+};
+
+struct Order {
+    string bookName;
+    int price;
+    int discount;
+    int quantity;
+
+    Order(string name, int p, int d, int q) : bookName(name), price(p), discount(d), quantity(q) {}
+};
+
+void displayMainMenu() {
+    cout << "\n********** Welcome to the Bookstore **********\n";
+    cout << "1. Programming Books\n";
+    cout << "2. Data Science & AI Books\n";
+    cout << "3. Fiction Books\n";
+    cout << "4. Non-Fiction Books\n";
+    cout << "5. View and Adjust Cart\n";
+    cout << "6. Checkout\n";
+    cout << "**********************************************\n";
+}
+
+void addBookToCart(vector<Order>& cart, const string& category, const vector<Book>& books) {
+    int choice, quantity;
+    cout << "\nYou selected " << category << ".\n";
+    for (size_t i = 0; i < books.size(); i++) {
+        cout << i + 1 << ". " << books[i].name << " - Rs. " << books[i].price 
+             << " (" << books[i].discount << "% discount)\n";
+    }
+    cout << "Enter the number of the book you want to add to the cart: ";
+    cin >> choice;
+    if (choice < 1 || choice > books.size()) {
+        cout << "Invalid choice. Please try again.\n";
+        return;
+    }
+    cout << "Enter the quantity: ";
+    cin >> quantity;
+    cart.push_back(Order(books[choice - 1].name, books[choice - 1].price, books[choice - 1].discount, quantity));
+    cout << "Added " << quantity << " x " << books[choice - 1].name << " to your cart.\n";
+}
+
+void programmingBooksMenu(vector<Order>& cart) {
+    vector<Book> programmingBooks = {
+        {"C++ Programming", 1000, 10},
+        {"Python Basics", 1200, 15},
+        {"Java Fundamentals", 1100, 12},
+        {"Web Development with JavaScript", 1300, 18}
+    };
+    addBookToCart(cart, "Programming Books", programmingBooks);
+}
+
+void dataScienceBooksMenu(vector<Order>& cart) {
+    vector<Book> dataScienceBooks = {
+        {"Data Science Fundamentals", 1500, 20},
+        {"Machine Learning Basics", 1600, 18},
+        {"Deep Learning with Python", 1700, 25},
+        {"Artificial Intelligence Essentials", 1800, 22}
+    };
+    addBookToCart(cart, "Data Science & AI Books", dataScienceBooks);
+}
+
+void fictionBooksMenu(vector<Order>& cart) {
+    vector<Book> fictionBooks = {
+        {"The Great Gatsby", 500, 5},
+        {"To Kill a Mockingbird", 600, 7},
+        {"1984 by George Orwell", 700, 10},
+        {"Pride and Prejudice", 550, 6}
+    };
+    addBookToCart(cart, "Fiction Books", fictionBooks);
+}
+
+void nonFictionBooksMenu(vector<Order>& cart) {
+    vector<Book> nonFictionBooks = {
+        {"Sapiens: A Brief History of Humankind", 800, 12},
+        {"Atomic Habits", 850, 10},
+        {"Educated: A Memoir", 900, 15},
+        {"The Subtle Art of Not Giving a F*ck", 750, 8}
+    };
+    addBookToCart(cart, "Non-Fiction Books", nonFictionBooks);
+}
+
+void viewAndAdjustCart(vector<Order>& cart) {
+    if (cart.empty()) {
+        cout << "Your cart is empty.\n";
+        return;
+    }
+
+    cout << "Your current cart:\n";
+    int total = 0;
+    for (size_t i = 0; i < cart.size(); i++) {
+        int discountedPrice = cart[i].price - (cart[i].price * cart[i].discount / 100);
+        cout << i + 1 << ". " << cart[i].bookName << " - Rs. " << cart[i].price 
+             << " (" << cart[i].discount << "% off) x " << cart[i].quantity 
+             << " = Rs. " << discountedPrice * cart[i].quantity << "\n";
+        total += discountedPrice * cart[i].quantity;
+    }
+
+    cout << "\nTotal: Rs. " << total << "\n";
+    char action;
+    cout << "\nWould you like to (R)emove a book, (A)dd a new book, or (C)ontinue? ";
+    cin >> action;
+    if (action == 'R' || action == 'r') {
+        int bookIndex;
+        cout << "Enter the number of the book you want to remove (1-" << cart.size() << "): ";
+        cin >> bookIndex;
+        if (bookIndex >= 1 && bookIndex <= cart.size()) {
+            cart.erase(cart.begin() + bookIndex - 1);
+            cout << "Book removed from the cart.\n";
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
     }
 }
+
+void checkout(const vector<Order>& cart) {
+    if (cart.empty()) {
+        cout << "Your cart is empty. Add some books first!\n";
+        return;
+    }
+
+    int total = 0;
+    cout << "Your final order:\n";
+    for (const auto& order : cart) {
+        int discountedPrice = order.price - (order.price * order.discount / 100);
+        cout << "- " << order.bookName << " - Rs. " << discountedPrice 
+             << " x " << order.quantity 
+             << " = Rs. " << discountedPrice * order.quantity << "\n";
+        total += discountedPrice * order.quantity;
+    }
+    cout << "\nTotal Bill: Rs. " << total << "\n";
+    cout << "Thank you for shopping at the Bookstore!\n";
+}
+
+void bookstore() {
+    vector<Order> cart;
+    int choice;
+
+    do {
+        displayMainMenu();
+        cout << "Enter your choice (1-6): ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: programmingBooksMenu(cart); break;
+            case 2: dataScienceBooksMenu(cart); break;
+            case 3: fictionBooksMenu(cart); break;
+            case 4: nonFictionBooksMenu(cart); break;
+            case 5: viewAndAdjustCart(cart); break;
+            case 6: checkout(cart); break;
+            default: cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 6);
+}
+
 
 // Restaurant
 struct OrderItem {
@@ -711,6 +1006,11 @@ void restaurantMenu() {
             default: cout << "Invalid choice. Try again.\n";
         }
     } while (choice != 3);
+}
+
+// Jewelry Shop
+void jewelryShop() {
+    handleJewelryShop();
 }
 
 // Third Floor Menu

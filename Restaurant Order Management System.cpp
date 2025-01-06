@@ -18,6 +18,7 @@ void saveMenu(MenuItem menu[], int itemCount);
 void displayMenu(const MenuItem menu[], int itemCount);
 int placeOrder(MenuItem menu[], int itemCount);
 void updateQuantity(MenuItem &item, int quantityOrdered);
+void displayMainMenu();
 
 const int MAX_ITEMS = 100; // Maximum number of menu items
 
@@ -30,11 +31,7 @@ int main() {
 
     int choice;
     do {
-        cout << "\nRestaurant Order Management System\n";
-        cout << "1. View Menu\n";
-        cout << "2. Place Order\n";
-        cout << "3. Exit\n";
-        cout << "Enter your choice: ";
+        displayMainMenu(); // Call the renamed function
         cin >> choice;
 
         switch (choice) {
@@ -126,4 +123,13 @@ int placeOrder(MenuItem menu[], int itemCount) {
 // Update the quantity of an item
 void updateQuantity(MenuItem &item, int quantityOrdered) {
     item.quantityAvailable -= quantityOrdered;
+}
+
+// Display main menu
+void displayMainMenu() {
+    cout << "\nRestaurant Order Management System\n";
+    cout << "1. View Menu\n";
+    cout << "2. Place Order\n";
+    cout << "3. Exit\n";
+    cout << "Enter your choice: ";
 }
